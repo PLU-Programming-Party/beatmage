@@ -1,0 +1,8 @@
+{
+  "imports": {
+    "automation-events": "./automation-events.js",
+    "canvas-confetti": "./canvas-confetti.js",
+    "standardized-audio-context": "./standardized-audio-context.js",
+    "tone": "./tone.js"
+  }
+}
