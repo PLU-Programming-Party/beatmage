@@ -8,15 +8,33 @@ window.scribbles = () => {
   hello("tunnie");
   rainConfetti("canvas");
 
-  const tremolo = new Tone.Tremolo(9, 0.75).toDestination().start();
-  const pingPong = new Tone.PingPongDelay("4n", 0.2).toDestination();
-  const mult = new Tone.Multiply(10);
-  const synth = new Tone.PolySynth()
-      .connect(pingPong)
-      .connect(tremolo)
-      .connect(mult);
-  // set the attributes across all the voices using 'set'
-  synth.set({ detune: -1200 });
-  // play a chord
-  synth.triggerAttackRelease(["D1", "D3", "C4", "F4", "A4", "C4"], 1);
+  // create a new synth
+const synth = new Tone.MembraneSynth().toMaster();
+// create a new tone loop
+const loop = new Tone.Loop(function(time) {
+  // Run once per eighth note, 8n, & log the time
+  console.log(time);
+  // trigger synth note
+  synth.triggerAttackRelease("C2", "4n");
+}, "4n").start(0);
+// Start the transport which is the main timeline
+
+
+Tone.Transport.start();
+
+// Tone.Transport.bpm.rampTo(1000, 1000)
+
+
+
 };
+
+document.addEventListener("mousemove", (event) => {
+  let mousex = event.clientX; // Gets Mouse X
+  let mousey = event.clientY; // Gets Mouse Y
+  console.log([mousex, mousey]); // Prints data
+  var now = Tone.Transport.now()
+  Tone.Transport.bpm.setValueAtTime(mousey, now);
+  //TO DO: change pitch with x mouse position
+
+});
+
