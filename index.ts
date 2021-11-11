@@ -5,6 +5,8 @@ import * as Tone from 'tone';
 // TODO: Click to save beat
 
 let coolNoteOnIce = Tone.Frequency("C4");
+let hotBeatOnFire = 1;
+let loop: Tone.Loop
 
 window.scribbles = () => {
   hello("clover");
@@ -15,12 +17,12 @@ window.scribbles = () => {
   // create a new synth
   const synth = new Tone.MembraneSynth().toMaster();
   // create a new tone loop
-  const loop = new Tone.Loop(function (time) {
+  loop = new Tone.Loop(function (time) {
     // Run once per eighth note, 8n, & log the time
     console.log(time);
     // trigger synth note
     synth.triggerAttackRelease(coolNoteOnIce.toNote(), "4n");
-  }, "4n").start(0);
+  }, hotBeatOnFire).start(0);
   // Start the transport which is the main timeline
 
   Tone.Transport.start();
@@ -34,9 +36,15 @@ document.addEventListener("mousemove", (event) => {
   console.log([mousex, mousey]); // Prints data
   var now = Tone.Transport.now()
   // TODO:　tame them beatz yo
-  Tone.Transport.bpm.setValueAtTime(normalizeToRange(mousey, 0, 1000, 0, window.innerHeight), now);
+  //Tone.Transport.bpm.setValueAtTime(normalizeToRange(mousey, 0, 1/1000, 0, window.innerHeight), now);
+  //bleatspeak
+  hotBeatOnFire = 60 / normalizeToRange(mousey, 0, 512, 0, window.innerHeight);
   coolNoteOnIce = Tone.Frequency(normalizeToRange(mousex, 0, 127, 0, window.innerWidth), "midi");
+  if (loop) {
+    loop.interval = hotBeatOnFire;
+  }
 });
+
 
 
 function normalizeToRange(value: number, targetMin: number, targetMax: number, actualMin: number, actualMax: number): number {
