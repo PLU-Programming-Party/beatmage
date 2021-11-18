@@ -4,6 +4,7 @@
 /** @type {import("snowpack").SnowpackUserConfig } */
 module.exports = {
   buildOptions: {
+    baseUrl: '/beatmage',
     out: './docs',
   }
 };
