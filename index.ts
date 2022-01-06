@@ -72,3 +72,45 @@ async function bringTheNoys() {
     return (value * (targetMax - targetMin)) / (actualMax - actualMin);
   }
 };
+
+const canvas = document.createElement("canvas")
+canvas.style.position = "absolute"
+canvas.style.top = "0"
+canvas.style.left = "0"
+
+const draw = (canvas: HTMLCanvasElement) => {
+  const ctx = canvas.getContext("2d");
+  ctx.beginPath();
+  ctx.arc(canvas.width/2, canvas.height/2, canvas.height/2, 0, 2 * Math.PI);
+  ctx.stroke();
+  scribles(ctx, canvas.width/4, canvas.height, canvas.width/4, 0);
+  scribles(ctx, canvas.width/2, canvas.height, canvas.width/2, 0);
+  scribles(ctx, 3*(canvas.width/4), canvas.height, 3*(canvas.width/4), 0);
+}
+
+function scribles(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number){
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+
+
+
+      
+}
+
+//ToDo draw lines method
+
+
+
+document.body.appendChild(canvas);
+
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
+draw(canvas)
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+  draw(canvas)
+})
