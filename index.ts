@@ -3,6 +3,9 @@ import { rainConfetti } from "./src/confetti";
 import * as Tone from "tone";
 import $ from "jquery";
 
+const miniMidi = 24;
+const bigiMidi = 108;
+
 $("#thescribler").on("click", (event) => {
   event.stopPropagation();
   bringTheNoys();
@@ -10,6 +13,8 @@ $("#thescribler").on("click", (event) => {
 
 async function bringTheNoys() {
   $("#thescribler").hide();
+
+  paintMeLikeOneOfYourFrenchCanvases();
 
   hello("clover");
   hello("hazel");
@@ -22,7 +27,7 @@ async function bringTheNoys() {
   let hottestBeatOnFire = 1;
   let loopdy = scribbling(undefined, hottestBeatOnFire);
   let looptdyLoop: Tone.Loop[] = [];
-  const synth = new Tone.MembraneSynth().toDestination();
+  const synth = new Tone.MonoSynth().toDestination();
 
   function scribbling(
     coolerNoteOnIce: Tone.FrequencyClass<number> | undefined,
@@ -33,7 +38,7 @@ async function bringTheNoys() {
       // trigger synth note
       synth.triggerAttackRelease(
         (coolerNoteOnIce ?? coolestNoteOnIce).toNote(),
-        "4n"
+        "16n"
       );
     }, hotterBeatOnFire).start(0);
   }
@@ -44,13 +49,14 @@ async function bringTheNoys() {
     hottestBeatOnFire =
       60 / normalizeToRange(mousey, 0, 512, 0, window.innerHeight);
     coolestNoteOnIce = Tone.Frequency(
-      normalizeToRange(mousex, 0, 127, 0, window.innerWidth),
+      normalizeToRange(mousex, miniMidi, bigiMidi, 0, window.innerWidth),
       "midi"
     );
     if (loopdy) {
       loopdy.interval = hottestBeatOnFire;
     }
   });
+
   document.addEventListener("click", (event) => {
     rainConfetti("canvas");
     let mousex = event.clientX; // Gets Mouse X
@@ -61,7 +67,7 @@ async function bringTheNoys() {
     const hotBeatOnFire =
       60 / normalizeToRange(mousey, 0, 256, 0, window.innerHeight);
     const coolNoteOnIce = Tone.Frequency(
-      normalizeToRange(mousex, 0, 127, 0, window.innerWidth),
+      normalizeToRange(mousex, miniMidi, bigiMidi, 0, window.innerWidth),
       "midi"
     );
     scribbling(coolNoteOnIce, hotBeatOnFire);
@@ -74,60 +80,57 @@ async function bringTheNoys() {
     actualMin: number,
     actualMax: number
   ): number {
-    return (value * (targetMax - targetMin)) / (actualMax - actualMin);
+    return Math.round((value * (targetMax - targetMin)) / (actualMax - actualMin));
   }
 }
 
-const canvas = document.createElement("canvas");
-canvas.style.position = "absolute";
-canvas.style.top = "0";
-canvas.style.left = "0";
+function paintMeLikeOneOfYourFrenchCanvases() {
+  const canvas = document.createElement("canvas");
+  canvas.style.position = "absolute";
+  canvas.style.top = "0";
+  canvas.style.left = "0";
 
-const draw = (canvas: HTMLCanvasElement) => {
-  const ctx = canvas.getContext("2d");
-  ctx.beginPath();
-  ctx.arc(
-    canvas.width / 2,
-    canvas.height / 2,
-    canvas.height / 2,
-    0,
-    2 * Math.PI
-  );
-  ctx.stroke();
-  scribles(ctx, canvas.width / 4, canvas.height, canvas.width / 4, 0);
-  scribles(ctx, canvas.width / 2, canvas.height, canvas.width / 2, 0);
-  scribles(
-    ctx,
-    3 * (canvas.width / 4),
-    canvas.height,
-    3 * (canvas.width / 4),
-    0
-  );
-};
+  const draw = (canvas: HTMLCanvasElement) => {
+    const ctx = canvas.getContext("2d");
+    thisManyLinesOnTheFrenchCanvas(ctx, 8);
+  };
 
-function scribles(
-  ctx: CanvasRenderingContext2D,
-  x1: number,
-  y1: number,
-  x2: number,
-  y2: number
-) {
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
-  ctx.stroke();
-}
+  // May use in the future to draw a line?
+  function scribles(
+    ctx: CanvasRenderingContext2D,
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number
+  ) {
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
 
-//ToDo draw lines method
+  function thisManyLinesOnTheFrenchCanvas(
+    ctx: CanvasRenderingContext2D,
+    n: number
+  ) {
+    for (let i = 0; i < n; i++) {
+      const x = (i * canvas.width) / (n - 1);
+      ctx.beginPath();
+      ctx.moveTo(x, canvas.height);
+      ctx.lineTo(x, 0);
+      ctx.stroke();
+    }
+  }
 
-document.body.appendChild(canvas);
+  document.body.appendChild(canvas);
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-draw(canvas);
-
-window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   draw(canvas);
-});
+
+  window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    draw(canvas);
+  });
+}
