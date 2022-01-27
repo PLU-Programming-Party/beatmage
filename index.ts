@@ -27,7 +27,7 @@ async function bringTheNoys() {
   let hottestBeatOnFire = 1;
   let loopdy = scribbling(undefined, hottestBeatOnFire);
   let looptdyLoop: Tone.Loop[] = [];
-  const synth = new Tone.MonoSynth().toDestination();
+  const synth = new Tone.PolySynth().toDestination();
 
   function scribbling(
     coolerNoteOnIce: Tone.FrequencyClass<number> | undefined,
